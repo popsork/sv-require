@@ -19,9 +19,9 @@ var require = function(requirePath) {
          var maxLines = 20000;
          var _line = br.readLine();
          while (_line && --maxLines > 0) {
-      		sb.append(_line + "\n");
+            sb.append(_line + "\n");
             _line = br.readLine();
-      	}
+         }
          
          stream.close();
          
