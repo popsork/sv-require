@@ -10,22 +10,26 @@ var require = function(requirePath) {
        cache = {};
    
    getCode = function(node) {
-      var binary = propertyUtil.getBinary(node, 'URI');
+      var binary = propertyUtil.getBinary(node, 'URI'),
+         stream,
+         reader,
+         builder,
+         maximumLinesToRead = 20000,
+         line;
       
       if (binary) {
-         var stream = binary.getStream();
-         var br = new BufferedReader(new InputStreamReader(stream));
-         var sb = new java.lang.StringBuilder();
-         var maxLines = 20000;
-         var line = br.readLine();
-         
-         while (line && --maxLines > 0) {
-            sb.append(line + "\n");
-            line = br.readLine();
+         stream = binary.getStream();
+         reader = new BufferedReader(new InputStreamReader(stream));
+         builder = new java.lang.StringBuilder();
+         line = reader.readLine();
+
+         while (line && --maximumLinesToRead > 0) {
+            builder.append(line + "\n");
+            line = reader.readLine();
          }
          
          stream.close();
-         return sb.toString() + '';
+         return builder.toString() + '';
       }
       
       return null;
