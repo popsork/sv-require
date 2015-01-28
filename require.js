@@ -7,7 +7,7 @@ var require = function(requirePath) {
        getCode,
        findNode,
        joinPath,
-       _cache = {};
+       cache = {};
    
    getCode = function(node) {
       var binary = propertyUtil.getBinary(node, 'URI');
@@ -17,14 +17,14 @@ var require = function(requirePath) {
          var br = new BufferedReader(new InputStreamReader(stream));
          var sb = new java.lang.StringBuilder();
          var maxLines = 20000;
-         var _line = br.readLine();
-         while (_line && --maxLines > 0) {
-            sb.append(_line + "\n");
-            _line = br.readLine();
+         var line = br.readLine();
+         
+         while (line && --maxLines > 0) {
+            sb.append(line + "\n");
+            line = br.readLine();
          }
          
          stream.close();
-         
          return sb.toString() + '';
       }
       
@@ -33,8 +33,8 @@ var require = function(requirePath) {
    
    execute = function(fileNode) {
       var ident = fileNode.identifier + '';
-      if (ident in _cache) {
-         return _cache[ident];
+      if (ident in cache) {
+         return cache[ident];
       }
       
       var code = getCode(fileNode);
@@ -48,7 +48,7 @@ var require = function(requirePath) {
          }
       }, mod, mod.exports);
       
-      _cache[ident] = mod.exports;
+      cache[ident] = mod.exports;
       return mod.exports;
    }
    
