@@ -1,4 +1,4 @@
-var require = function(requirePath) {
+var lp_require = function(requirePath) {
    var utils = request.getAttribute('sitevision.utils'),
        session = request.getAttribute('sitevision.jcr.session'),
        propertyUtil = utils.propertyUtil,
@@ -19,11 +19,11 @@ var require = function(requirePath) {
       
       if (binary) {
          stream = binary.getStream();
-         reader = new BufferedReader(new InputStreamReader(stream));
+         reader = new java.io.BufferedReader(new java.io.InputStreamReader(stream));
          builder = new java.lang.StringBuilder();
          line = reader.readLine();
 
-         while (line && --maximumLinesToRead > 0) {
+         while (line != null && --maximumLinesToRead > 0) {
             builder.append(line + "\n");
             line = reader.readLine();
          }
@@ -33,7 +33,7 @@ var require = function(requirePath) {
       }
       
       return null;
-   }
+   };
    
    execute = function(fileNode) {
       var ident = fileNode.identifier + '';
@@ -42,7 +42,7 @@ var require = function(requirePath) {
       }
       
       var code = getCode(fileNode);
-      var func = new Function('require', 'module', 'exports', code),
+      var func = new Function('lp_require', 'module', 'exports', code),
          mod = { exports: {} };
       
       func.call(mod.exports, function(nextNodePath) {
@@ -53,8 +53,9 @@ var require = function(requirePath) {
       }, mod, mod.exports);
       
       cache[ident] = mod.exports;
+
       return mod.exports;
-   }
+   };
    
    joinPath = function(root, path) {
       var fileRepositoryRootPath = resourceLocatorUtil.fileRepository.path + '',
@@ -98,7 +99,7 @@ var require = function(requirePath) {
       }
       
       return normalizedPath.join('/');
-   }
+   };
    
    findNode = function(root, path) {
       var fileNode = null;
@@ -110,7 +111,7 @@ var require = function(requirePath) {
       }
       
       return fileNode;
-   }
+   };
    
    var node = findNode(resourceLocatorUtil.fileRepository.path + '', requirePath);
    if (node) {
@@ -120,4 +121,4 @@ var require = function(requirePath) {
    return null;
 };
 
-this['require'] = require;
+this['lp_require'] = lp_require;
